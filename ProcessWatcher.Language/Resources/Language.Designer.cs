@@ -59,5 +59,32 @@ namespace ProcessWatcher.Language.Resources {
                 resourceCulture = value;
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ProcessManuallyStopped {
+            get {
+                return ResourceManager.GetString("ProcessManuallyStopped", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ProcessStarted {
+            get {
+                return ResourceManager.GetString("ProcessStarted", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ProcessStopped {
+            get {
+                return ResourceManager.GetString("ProcessStopped", resourceCulture);
+            }
+        }
     }
 }
