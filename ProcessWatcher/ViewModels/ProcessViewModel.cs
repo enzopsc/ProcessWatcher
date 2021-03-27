@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using ProcessWatcher.Core;
@@ -34,8 +35,10 @@ namespace ProcessWatcher.ViewModels
 
 	public class ProcessViewModel : ReactiveObject, IProcessViewModel
 	{
-		public ProcessViewModel(string fullName)
+
+		public ProcessViewModel(string fullName, IScheduler mainThreadScheduler = null)
 		{
+			mainThreadScheduler ??= RxApp.MainThreadScheduler;
 			Path = fullName;
 			StartCommand = ReactiveCommand.Create(() =>
 			{
@@ -43,7 +46,7 @@ namespace ProcessWatcher.ViewModels
 				ChangeToCanStop();
 				SetupProcessObserver();
 				return this._processObserver.Start();
-			}, this.WhenAnyValue(e => e.CanStart));
+			}, this.WhenAnyValue(e => e.CanStart), mainThreadScheduler);
 			StopCommand = ReactiveCommand.CreateFromTask(async () =>
 			{
 				if (!_canStop) return false;
@@ -54,7 +57,7 @@ namespace ProcessWatcher.ViewModels
 					LogRows.Add(Language.Resources.Language.ProcessStarted);
 				await _processObserver;
 				return true;
-			}, this.WhenAnyValue(e => e.CanStop));
+			}, this.WhenAnyValue(e => e.CanStop), mainThreadScheduler);
 			this.WhenAnyValue(e => e.AutoRestart)
 				.Where(e => this.Status != ProcessStatus.Running)
 				.Subscribe(x => this.StartCommand.Execute().Subscribe());

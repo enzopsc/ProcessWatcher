@@ -7,14 +7,10 @@ namespace TestRunningConsole
 	{
 		public static void Main(string[] args)
 		{
-			int counter = 0;
-			while (true)
+			for (int i = 0; i < 5000; i++)
 			{
 				Console.WriteLine("Test Log");
-				counter++;
 				Thread.Sleep(1000);
-				if (counter > 5000)
-					break;
 			}
 		}
 	}
