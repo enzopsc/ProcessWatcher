@@ -7,6 +7,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Notifications.Wpf;
 using ProcessWatcher.Core;
+using ProcessWatcher.ViewModels;
 using ReactiveUI;
 using Splat;
 
@@ -16,6 +17,8 @@ namespace ProcessWatcher.Views
 	{
 		public MainView()
 		{
+
+
 			// CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvUsers.ItemsSource);
 			// PropertyGroupDescription groupDescription = new PropertyGroupDescription("Sex");
 			// view.GroupDescriptions.Add(groupDescription);
@@ -24,6 +27,11 @@ namespace ProcessWatcher.Views
 			{
 				if (this.ViewModel == null)
 					return;
+				// CollectionViewSource src = new CollectionViewSource();
+				// src.IsLiveGroupingRequested = true;
+				// src.Source = this.ViewModel.ProcessViewModels;
+				// src.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ProcessViewModel.GroupKey)));
+
 				this.Events().Drop
 					.Subscribe(async dragDropEvent =>
 					{

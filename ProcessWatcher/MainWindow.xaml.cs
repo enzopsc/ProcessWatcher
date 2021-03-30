@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using BECCore.AutoLog;
+using MahApps.Metro.Controls.Dialogs;
 using Notifications.Wpf;
 using ProcessWatcher.ViewModels;
 using ReactiveUI;
@@ -19,11 +21,28 @@ namespace ProcessWatcher
             Statics.NotificationEvent += GlobalOnNotificationEvent;
             var host = Locator.Current.GetService<IMainScreen>();
             DataContext = host;
+            this.Closing += OnClosing;
             this.Closed += OnClosed;
             InitializeComponent();
             host.Router.NavigateAndReset
                 .Execute(Locator.Current.GetService<IMainViewModel>())
                 .Subscribe();
+        }
+
+        private bool _isClosing;
+
+        private async void OnClosing(object sender, CancelEventArgs e)
+        {
+            if (!_isClosing)
+            {
+                e.Cancel = true;
+                if(await this.ShowMessageAsync("Are you sure?", "Closing this app will close all attached process", MessageDialogStyle.AffirmativeAndNegative) == MessageDialogResult.Affirmative)
+                {
+                    this._isClosing = true;
+                    this.Close();
+                }
+            }
+
         }
 
         private void OnClosed(object sender, EventArgs e)

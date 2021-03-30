@@ -43,6 +43,23 @@ namespace ProcessWatcher.Core
 			_p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			_p.StartInfo.RedirectStandardOutput = true;
 			_p.StartInfo.RedirectStandardError = true;
+			//Fix Duplicate logs
+			// this._processObservervable = process.Window(() => process.Throttle(TimeSpan.FromMilliseconds(500)))
+			// 	.SelectMany(e => e.Select(z => z.EventArgs).ToList())
+			// 	.SelectMany(e => e.DistinctBy(z => z.Data.ToLower()).ToObservable())
+			// 	.Do(x =>
+			// 	{
+			// 		try
+			// 		{
+			// 			foreach (var observer in _observers)
+			// 				observer.OnNext(x);
+			// 		}
+			// 		catch
+			// 		{
+			// 		}
+			// 		_buffer.Add(x);
+			// 	})
+			// 	.Publish();
 			this._processObservervable = _p.ObservableProcessRead()
 				.Select(e => e.EventArgs)
 				.Do(x =>

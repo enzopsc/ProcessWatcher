@@ -7,6 +7,8 @@
         xmlns:reactiveUi="http://reactiveui.net"
         xmlns:controls="clr-namespace:Notifications.Wpf.Controls;assembly=Notifications.Wpf"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        Icon="pack://application:,,,/eye.ico"
+        ShowIconOnTitleBar="True"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:AppBootstrapper, IsDesignTimeCreatable=True}"
         Title="ProcessWatcher" Height="350" Width="525">

@@ -8,6 +8,7 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:ProcessWatcher.ViewModels"
                                 xmlns:system="clr-namespace:System;assembly=mscorlib"
+                                xmlns:utils="clr-namespace:ProcessWatcher.Utils"
                                 mc:Ignorable="d"
                                 DataContext="{Binding Path=ViewModel, RelativeSource={RelativeSource Self}}"
                                 d:DesignHeight="300"
@@ -22,16 +23,14 @@
                     <system:String>GroupKey</system:String>
                 </CollectionViewSource.LiveGroupingProperties>
                 <CollectionViewSource.GroupDescriptions>
-                    <PropertyGroupDescription PropertyName="GroupKey" />
+                    <utils:CustomPropertyGroupDescription PropertyName="GroupKey" />
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
         </Grid.Resources>
         <ListView
-            ItemsSource="{Binding Source={StaticResource GroupedItems}}">
+            ItemsSource="{Binding Source={StaticResource GroupedItems}, IsAsync=True}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <!--I have also tried the following line, didn't work  -->
-                    <!--<DataTemplate DataType="{x:Type vm:ChildViewModel}">-->
                     <local:ProcessView DataContext="{Binding}" ViewModel="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -53,7 +52,8 @@
                                                         FontSize="22"
                                                         FontWeight="Bold"
                                                         Foreground="LightGray"
-                                                        Text="{Binding GroupKey}" />
+                                                        Text="{Binding Path=GroupKey}" />
+                                                    <!-- Text="{Binding Test}" /> -->
                                                 </StackPanel>
                                             </Expander.Header>
                                             <ItemsPresenter />

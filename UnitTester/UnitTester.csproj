@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ProcessWatcher\ProcessWatcher.csproj" />
+      <ProjectReference Include="..\TestRunningConsole\TestRunningConsole.csproj" />
     </ItemGroup>
 
 </Project>

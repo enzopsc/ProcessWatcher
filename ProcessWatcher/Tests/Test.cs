@@ -22,14 +22,6 @@ namespace ProcessWatcher.Tests
 			public async Task Test1()
 			{
 				var testScheduler = new TestScheduler();
-				// new TestScheduler().With(scheduler =>
-				// {
-				// 	// Initialize a new view model using the TestScheduler.
-				// 	var model = new LoginViewModel(scheduler);
-				//
-				// 	// Play with time.
-				// 	scheduler.AdvanceByMs(2 * 100);
-				// });
 				var processViewModel = new ProcessViewModel(@"C:\Processes\TestRunningConsole1.exe", testScheduler) {AutoRestart = true};
 				var observable = processViewModel.LogRows
 					.ObserveCollectionChanges()

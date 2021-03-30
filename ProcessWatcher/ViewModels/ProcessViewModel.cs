@@ -45,6 +45,7 @@ namespace ProcessWatcher.ViewModels
 		ReactiveCommand<Unit, bool> StopCommand { get; }
 
 		ReactiveCommand<Unit, Unit> ConsoleCommand { get; }
+		ReactiveCommand<Unit, bool> DeleteCommand { get; }
 	}
 
 	public class ProcessViewModel : ReactiveObject, IProcessViewModel
@@ -64,6 +65,13 @@ namespace ProcessWatcher.ViewModels
 			});
 			StartCommand = ReactiveCommand.Create(Start, this.WhenAnyValue(e => e.CanStart).ObserveOn(mainThreadScheduler), mainThreadScheduler);
 			StopCommand = ReactiveCommand.CreateFromTask(async () => await Stop(), this.WhenAnyValue(e => e.CanStop).ObserveOn(mainThreadScheduler), mainThreadScheduler);
+			DeleteCommand = ReactiveCommand.CreateFromTask<Unit, bool>(async _ =>
+			{
+				if(this.CanStop)
+					await Stop();
+				this.ChangeToDeleted();
+				return Statics.AppConfig.RemoveProcess(this);
+			}, null, mainThreadScheduler);
 			this.WhenAnyValue(e => e.AutoRestart)
 				.Throttle(TimeSpan.FromSeconds(5))
 				.Do(_ =>Statics.AppConfig.UpdateProcess(this))
@@ -117,6 +125,15 @@ namespace ProcessWatcher.ViewModels
 			this.RaisePropertyChanged(nameof(CanStop));
 			this.RaisePropertyChanged(nameof(CanStart));
 		}
+		private void ChangeToDeleted()
+		{
+			this.RaisePropertyChanging(nameof(CanStop));
+			this.RaisePropertyChanging(nameof(CanStart));
+			_canStop = false;
+			_canStart = false;
+			this.RaisePropertyChanged(nameof(CanStop));
+			this.RaisePropertyChanged(nameof(CanStart));
+		}
 
 		private ProcessObserver _processObserver;
 		private bool _canStart = true;
@@ -136,6 +153,7 @@ namespace ProcessWatcher.ViewModels
 		public ReactiveCommand<Unit, bool> StartCommand { get; }
 		public ReactiveCommand<Unit, bool> StopCommand { get; }
 		public ReactiveCommand<Unit, Unit> ConsoleCommand { get; }
+		public ReactiveCommand<Unit, bool> DeleteCommand { get; }
 
 		private void SetupProcessObserver()
 		{
