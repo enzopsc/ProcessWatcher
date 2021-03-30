@@ -1,4 +1,12 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Reactive.Disposables;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using Notifications.Wpf;
+using ProcessWatcher.Core;
+using ReactiveUI;
+using Splat;
 
 namespace ProcessWatcher.Views
 {
@@ -6,7 +14,33 @@ namespace ProcessWatcher.Views
 	{
 		public MainView()
 		{
+			// CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvUsers.ItemsSource);
+			// PropertyGroupDescription groupDescription = new PropertyGroupDescription("Sex");
+			// view.GroupDescriptions.Add(groupDescription);
 			InitializeComponent();
+			this.WhenActivated(x =>
+			{
+				if (this.ViewModel == null)
+					return;
+				this.Events().Drop
+					.Subscribe(dragDropEvent =>
+					{
+						string[] files = (string[])dragDropEvent.Data.GetData(DataFormats.FileDrop);
+						if (files == null)
+							return;
+						foreach (var file in files)
+						{
+							if(!file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
+								continue;
+							if (this.ViewModel.AddProcess(file))
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedSuccess, ProcessWatcher.Language.ProcessAddedMessage.Replace("$CONTENT$", file), NotificationType.Success));
+							else
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedFail, ProcessWatcher.Language.ProcessAddedFailMessage.Replace("$CONTENT$", file), NotificationType.Error));
+						}
+					})
+					.DisposeWith(x);
+			});
+
 		}
 	}
 }

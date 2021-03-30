@@ -8,9 +8,28 @@
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:ProcessWatcher.ViewModels"
                                 mc:Ignorable="d"
+                                DataContext="{Binding Path=ViewModel, RelativeSource={RelativeSource Self}}"
                                 d:DesignHeight="300"
-                                d:DesignWidth="300" >
+                                d:DesignWidth="300"
+                                AllowDrop="True">
     <Grid>
-
+        <ListView ItemsSource="{Binding ProcessViewModels}" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <!--I have also tried the following line, didn't work  -->
+                    <!--<DataTemplate DataType="{x:Type vm:ChildViewModel}">-->
+                    <local:ProcessView DataContext="{Binding}" ViewModel="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontSize="14" Text="Ok"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
     </Grid>
 </reactiveUi:ReactiveUserControl>

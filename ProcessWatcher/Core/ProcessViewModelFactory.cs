@@ -1,0 +1,24 @@
+using System.Reactive.Concurrency;
+using ProcessWatcher.ViewModels;
+using Splat;
+
+namespace ProcessWatcher.Core
+{
+	public interface IProcessFactory
+	{
+		IProcessViewModel BuildProcessViewModel(string fullName, bool autoRestart,IScheduler mainThreadScheduler = null);
+		// IProcessConfiguration BuildProcessConfiguration(string fullName, bool autoRestart);
+	}
+	public class ProcessFactory : IProcessFactory
+	{
+		public IProcessViewModel BuildProcessViewModel(string fullName, bool autoRestart, IScheduler mainThreadScheduler = null)
+		{
+			return new ProcessViewModel(fullName, mainThreadScheduler){AutoRestart = autoRestart};
+		}
+
+		// public IProcessConfiguration BuildProcessConfiguration(string fullName, bool autoRestart)
+		// {
+		// 	return new ProcessConfiguration(fullName, autoRestart);
+		// }
+	}
+}

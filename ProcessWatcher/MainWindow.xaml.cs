@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Input;
+using BECCore.AutoLog;
 using Notifications.Wpf;
 using ProcessWatcher.ViewModels;
 using ReactiveUI;
@@ -14,16 +16,21 @@ namespace ProcessWatcher
     {
         public MainWindow()
         {
+            Statics.NotificationEvent += GlobalOnNotificationEvent;
             var host = Locator.Current.GetService<IMainScreen>();
             DataContext = host;
+            this.Closed += OnClosed;
             InitializeComponent();
-            host.Router.NavigateAndReset.Execute(Locator.Current.GetService<IMainViewModel>()).Subscribe();
-            // mainViewModel.Global.NotificationEvent += GlobalOnNotificationEvent;
+            host.Router.NavigateAndReset
+                .Execute(Locator.Current.GetService<IMainViewModel>())
+                .Subscribe();
+        }
 
-            // this.WhenActivated(d =>
-            // {
-            //
-            // });
+        private void OnClosed(object sender, EventArgs e)
+        {
+            foreach (var appConfigProcessConfiguration in Statics.AppConfig.ProcessConfigurations)
+                foreach (var process in Process.GetProcessesByName(appConfigProcessConfiguration.FileName))
+                    try { process.Kill(); }catch(Exception ex) { Logging.Logger.Error("-> MainWindow -> OnClosed : ", ex); }
         }
 
         private void GlobalOnNotificationEvent(object sender, NotificationEventArgs e)
@@ -37,17 +44,15 @@ namespace ProcessWatcher
                     Message = e.Message,
                     Type = e.NotificationType
                 };
-                //new CustomNotification()
                 notificationManager.Show(
                     content,
-                    expirationTime: TimeSpan.MaxValue,
+                    expirationTime: TimeSpan.FromSeconds(5),
                     onClick: () =>
                     {
 
                     },
                     areaName: nameof(WindowArea));
             });
-
         }
     }
 }

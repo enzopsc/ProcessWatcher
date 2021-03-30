@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -9,6 +10,7 @@ using ProcessWatcher.Core;
 using ProcessWatcher.Utils;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Splat;
 
 namespace ProcessWatcher.ViewModels
 {
@@ -16,21 +18,32 @@ namespace ProcessWatcher.ViewModels
 	{
 		Error = -1,
 		Created,
+		Starting,
 		Running,
 		Stopped,
 		ManuallyStopped
 	}
 
+	public interface IProcess
+	{
+		string Path { get; set; }
+		ProcessStatus Status { get; set; }
+		bool AutoRestart { get; set; }
+	}
 	public interface IProcessViewModel
 	{
-		string Path { get; }
+		string Path { get; set; }
+		string FileName { get; }
+		bool AutoRestart { get; set; }
+		bool IsValid { get; }
 		ObservableCollection<string> LogRows { get; }
 		ProcessStatus Status { get; }
-		bool AutoRestart { get; set; }
 		bool CanStart { get; }
 		bool CanStop { get; }
 		ReactiveCommand<Unit, bool> StartCommand { get; }
 		ReactiveCommand<Unit, bool> StopCommand { get; }
+
+		ReactiveCommand<Unit, Unit> ConsoleCommand { get; }
 	}
 
 	public class ProcessViewModel : ReactiveObject, IProcessViewModel
@@ -40,27 +53,48 @@ namespace ProcessWatcher.ViewModels
 		{
 			mainThreadScheduler ??= RxApp.MainThreadScheduler;
 			Path = fullName;
-			StartCommand = ReactiveCommand.Create(() =>
+			this.WhenAnyValue(x => x.Path)
+				.Select(e => System.IO.Path.GetFileNameWithoutExtension(Path))
+				.ToPropertyEx(this, s => s.FileName);
+			ConsoleCommand = ReactiveCommand.Create(() =>
 			{
-				if (!_canStart) return false;
-				ChangeToCanStop();
-				SetupProcessObserver();
-				return this._processObserver.Start();
-			}, this.WhenAnyValue(e => e.CanStart), mainThreadScheduler);
-			StopCommand = ReactiveCommand.CreateFromTask(async () =>
-			{
-				if (!_canStop) return false;
-				this.Status = ProcessStatus.ManuallyStopped;
-				ChangeToCanStart();
-				this._processObserver.Stop();
-				lock (LogRows)
-					LogRows.Add(Language.Resources.Language.ProcessStarted);
-				await _processObserver;
-				return true;
-			}, this.WhenAnyValue(e => e.CanStop), mainThreadScheduler);
+				var logsViewModel = Locator.Current.GetService<ILogsViewModelFactory>().GenerateLogsViewModel(this._processObserver, mainThreadScheduler);
+				Locator.Current.GetService<IMainScreen>().Router.Navigate.Execute(logsViewModel).Subscribe();
+			});
+			StartCommand = ReactiveCommand.Create(Start, this.WhenAnyValue(e => e.CanStart).ObserveOn(mainThreadScheduler), mainThreadScheduler);
+			StopCommand = ReactiveCommand.CreateFromTask(async () => await Stop(), this.WhenAnyValue(e => e.CanStop).ObserveOn(mainThreadScheduler), mainThreadScheduler);
 			this.WhenAnyValue(e => e.AutoRestart)
-				.Where(e => this.Status != ProcessStatus.Running)
-				.Subscribe(x => this.StartCommand.Execute().Subscribe());
+				.Throttle(TimeSpan.FromSeconds(5))
+				.Do(_ =>Statics.AppConfig.UpdateProcess(this))
+				.Where(e => this.Status != ProcessStatus.Running && this.AutoRestart)
+				.Subscribe(x =>
+				{
+					this.StartCommand.Execute().Subscribe();
+				});
+		}
+
+		private async Task<bool> Stop()
+		{
+			if (!_canStop) return false;
+			this.Status = ProcessStatus.ManuallyStopped;
+			ChangeToCanStart();
+			this._processObserver.Stop();
+			lock (LogRows)
+				LogRows.Add(Language.ProcessStarted);
+			await _processObserver;
+			return true;
+		}
+
+		private bool Start()
+		{
+			if (!_canStart) return false;
+			this.Status = ProcessStatus.Starting;
+			ChangeToCanStop();
+			SetupProcessObserver();
+			var started = this._processObserver.Start();
+			if (started)
+				this.Status = ProcessStatus.Running;
+			return started;
 		}
 
 		private void ChangeToCanStop()
@@ -86,26 +120,30 @@ namespace ProcessWatcher.ViewModels
 		private ProcessObserver _processObserver;
 		private bool _canStart = true;
 		private bool _canStop = false;
-
-		public string Path { get; }
+		public string Path { get; set; }
+		public extern string FileName { [ObservableAsProperty]get; }
+		public bool IsValid => File.Exists(Path);
 		public ObservableCollection<string> LogRows { get; } = new();
 
 		[Reactive] public ProcessStatus Status { get; private set; }
 		[Reactive] public bool AutoRestart { get; set; }
 
+
 		public bool CanStart => _canStart;
 		public bool CanStop => _canStop;
 		public ReactiveCommand<Unit, bool> StartCommand { get; }
 		public ReactiveCommand<Unit, bool> StopCommand { get; }
+		public ReactiveCommand<Unit, Unit> ConsoleCommand { get; }
 
 		private void SetupProcessObserver()
 		{
+			_processObserver?.Dispose();
 			this._processObserver = new ProcessObserver(Path);
 			_processObserver
 				.Subscribe(x =>
 				{
 					lock (LogRows)
-						LogRows.Add(x.EventArgs.Data);
+						LogRows.Add(x.Data);
 				}, async () =>
 				{
 					this.ChangeToCanStart();
@@ -119,8 +157,7 @@ namespace ProcessWatcher.ViewModels
 						do
 						{
 							await Task.Delay(5000);
-						} while (await this.StartCommand.Execute());
-						Status = ProcessStatus.Running;
+						} while (!this.Start());
 					}
 					catch (Exception e)
 					{

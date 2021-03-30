@@ -9,7 +9,7 @@
         xmlns:controls="clr-namespace:Notifications.Wpf.Controls;assembly=Notifications.Wpf"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:AppBootstrapper, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="ProcessWatcher" Height="350" Width="525">
     <Grid>
         <reactiveUi:RoutedViewHost HorizontalContentAlignment="Stretch"
                                    VerticalContentAlignment="Stretch"

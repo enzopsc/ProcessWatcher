@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
         <UseWPF>true</UseWPF>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
 
 </Project>

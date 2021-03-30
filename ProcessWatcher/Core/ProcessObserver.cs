@@ -4,17 +4,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using ProcessWatcher.Utils;
 
 namespace ProcessWatcher.Core
 {
-	public class ProcessObserver : IObservable<EventPattern<DataReceivedEventArgs>>
+	public class ProcessObserver : IObservable<DataReceivedEventArgs>, IDisposable
 	{
 		private class Unsubscriber : IDisposable
 		{
-			private List<IObserver<EventPattern<DataReceivedEventArgs>>> _observers;
-			private IObserver<EventPattern<DataReceivedEventArgs>> _observer;
-			public Unsubscriber(IObserver<EventPattern<DataReceivedEventArgs>> observer, List<IObserver<EventPattern<DataReceivedEventArgs>>> observers)
+			private List<IObserver<DataReceivedEventArgs>> _observers;
+			private IObserver<DataReceivedEventArgs> _observer;
+			public Unsubscriber(IObserver<DataReceivedEventArgs> observer, List<IObserver<DataReceivedEventArgs>> observers)
 			{
 				_observers = observers;
 				_observer = observer;
@@ -25,25 +26,43 @@ namespace ProcessWatcher.Core
 					_observers.Remove(_observer);
 			}
 		}
-		private IObservable<EventPattern<DataReceivedEventArgs>> _processObservervable;
-		private List<IObserver<EventPattern<DataReceivedEventArgs>>> _observers = new();
+		private IConnectableObservable<DataReceivedEventArgs> _processObservervable;
+		private List<IObserver<DataReceivedEventArgs>> _observers = new();
+		private CircularBuffer<DataReceivedEventArgs> _buffer = new(Statics.AppConfig.LogsBufferSize);
 		private Process _p;
 		public ProcessObserver(string fileName)
 		{
+			if (!File.Exists(fileName))
+				throw new FileNotFoundException("File not found", fileName);
 			_p = new Process();
 			_p.EnableRaisingEvents = true;
 			_p.StartInfo.FileName = fileName;
 			_p.StartInfo.WorkingDirectory = Path.GetDirectoryName(fileName);
 			_p.StartInfo.UseShellExecute = false;
+			_p.StartInfo.CreateNoWindow = true;
+			_p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			_p.StartInfo.RedirectStandardOutput = true;
 			_p.StartInfo.RedirectStandardError = true;
-			this._processObservervable = _p.ObservableProcessRead();
-			//this._processObservervable = Observable.Defer(() =>
-			//{
-			//	IObservable<EventPattern<DataReceivedEventArgs>> result = p.ObservableProcessRead();
-			//	p.Start();
-			//	return result;
-			//});
+			this._processObservervable = _p.ObservableProcessRead()
+				.Select(e => e.EventArgs)
+				.Do(x =>
+				{
+					try
+					{
+						foreach (var observer in _observers)
+							observer.OnNext(x);
+					}
+					catch
+					{
+					}
+					_buffer.Add(x);
+				})
+				.Publish();
+		}
+
+		~ProcessObserver()
+		{
+			this.Dispose();
 		}
 
 		public bool Start()
@@ -54,6 +73,7 @@ namespace ProcessWatcher.Core
 				_p.BeginOutputReadLine();
 				_p.BeginErrorReadLine();
 			}
+			this._processObservervable.Connect();
 			return result;
 		}
 
@@ -69,11 +89,19 @@ namespace ProcessWatcher.Core
 			}
 			return true;
 		}
-		public IDisposable Subscribe(IObserver<EventPattern<DataReceivedEventArgs>> observer)
+
+		public IDisposable Subscribe(IObserver<DataReceivedEventArgs> observer)
 		{
 			_observers.Add(observer);
+			foreach (var dataReceivedEventArgs in _buffer.Latest())
+				observer.OnNext(dataReceivedEventArgs);
 			_processObservervable.Subscribe(observer);
 			return new Unsubscriber(observer, _observers);
+		}
+
+		public void Dispose()
+		{
+			_p?.Dispose();
 		}
 	}
 }

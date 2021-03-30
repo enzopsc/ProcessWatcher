@@ -1,4 +1,5 @@
-﻿using ProcessWatcher.ViewModels;
+﻿using ProcessWatcher.Core;
+using ProcessWatcher.ViewModels;
 using ProcessWatcher.Views;
 using ReactiveUI;
 using Splat;
@@ -65,8 +66,11 @@ namespace ProcessWatcher
 			// var logger = new CustomLogger(LogLevel.Debug);
 			// dependencyResolver.RegisterConstant<ILogger>(logger);
 			dependencyResolver.RegisterConstant<IMainScreen>(this);
+			dependencyResolver.RegisterConstant<ILogsViewModelFactory>(new LogsViewModelFactory());
 			dependencyResolver.Register<IMainViewModel>(() => new MainViewModel(locator.GetService<IMainScreen>(), RxApp.MainThreadScheduler));
 			dependencyResolver.Register<IViewFor<IMainViewModel>>(() => new MainView());
+			dependencyResolver.Register<IViewFor<IProcessViewModel>>(() => new ProcessView());
+			dependencyResolver.Register<IViewFor<ILogsViewModel>>(() => new LogsView());
 
 			// dependencyResolver.RegisterConstant<IViewLocator>(new ConventionalViewLocator());
 			// dependencyResolver.RegisterConstant<IContextMenuViewModelFactory>(new ContextMenuViewModelFactory());

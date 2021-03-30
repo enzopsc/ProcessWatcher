@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Threading;
 using BECCore.AutoLog;
 using log4net.Core;
+using ProcessWatcher.Core;
+using Splat;
 
 namespace ProcessWatcher
 {
@@ -14,12 +16,13 @@ namespace ProcessWatcher
         private AppBootstrapper _appBootstrapper;
         public App()
         {
-            BECCore.AutoLog.Logging.Setup("Logs/Log.log", Level.All);
+            Locator.CurrentMutable.RegisterConstant<IProcessFactory>(new ProcessFactory());
+            Statics.Initialize();
             Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
             SetLanguageDictionary();
             Logging.Logger.Debug("-> App -> App : " + "Started Application");
-            //Unosquare.FFME.Library.FFmpegDirectory = ConfigurationManager.AppSettings.Get("FFMPEG");
             _appBootstrapper = new AppBootstrapper();
+
         }
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -32,13 +35,13 @@ namespace ProcessWatcher
             switch (Thread.CurrentThread.CurrentCulture.ToString())
             {
                 case "it-IT":
-                    Language.Resources.Language.Culture = new System.Globalization.CultureInfo("it-IT");
+                    Language.Culture = new System.Globalization.CultureInfo("it-IT");
                     break;
                 case "en-US":
-                    Language.Resources.Language.Culture = new System.Globalization.CultureInfo("en-US");
+                    Language.Culture = new System.Globalization.CultureInfo("en-US");
                     break;
                 default:
-                    Language.Resources.Language.Culture = new System.Globalization.CultureInfo("it-IT");
+                    Language.Culture = new System.Globalization.CultureInfo("it-IT");
                     break;
             }
         }

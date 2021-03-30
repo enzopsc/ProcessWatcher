@@ -24,7 +24,7 @@ namespace UnitTester
 		public async Task ProcssViewModelTest()
 		{
 			var testScheduler = new TestScheduler();
-			var processPath = @"C:\Processes\TestRunningConsole1.exe";
+			var processPath = @"..\..\..\..\TestRunningConsole\bin\Debug\TestRunningConsole.exe";
 			var processName = Path.GetFileNameWithoutExtension(processPath);
 			var processViewModel = new ProcessViewModel(processPath, testScheduler) {AutoRestart = true};
 			processViewModel
