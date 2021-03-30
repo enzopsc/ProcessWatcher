@@ -3,6 +3,8 @@ using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Notifications.Wpf;
 using ProcessWatcher.Core;
 using ReactiveUI;
@@ -23,7 +25,7 @@ namespace ProcessWatcher.Views
 				if (this.ViewModel == null)
 					return;
 				this.Events().Drop
-					.Subscribe(dragDropEvent =>
+					.Subscribe(async dragDropEvent =>
 					{
 						string[] files = (string[])dragDropEvent.Data.GetData(DataFormats.FileDrop);
 						if (files == null)
@@ -32,7 +34,9 @@ namespace ProcessWatcher.Views
 						{
 							if(!file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
 								continue;
-							if (this.ViewModel.AddProcess(file))
+							var metroWindow = Window.GetWindow(this) as MetroWindow;
+							var groupKey = await metroWindow.ShowInputAsync("Set Group Key", "Set Group Key");
+							if (this.ViewModel.AddProcess(file, groupKey))
 								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedSuccess, ProcessWatcher.Language.ProcessAddedMessage.Replace("$CONTENT$", file), NotificationType.Success));
 							else
 								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedFail, ProcessWatcher.Language.ProcessAddedFailMessage.Replace("$CONTENT$", file), NotificationType.Error));

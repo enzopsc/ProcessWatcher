@@ -35,6 +35,7 @@ namespace ProcessWatcher.ViewModels
 		string Path { get; set; }
 		string FileName { get; }
 		bool AutoRestart { get; set; }
+		string GroupKey { get; set; }
 		bool IsValid { get; }
 		ObservableCollection<string> LogRows { get; }
 		ProcessStatus Status { get; }
@@ -122,6 +123,7 @@ namespace ProcessWatcher.ViewModels
 		private bool _canStop = false;
 		public string Path { get; set; }
 		public extern string FileName { [ObservableAsProperty]get; }
+		public string GroupKey { get; set; }
 		public bool IsValid => File.Exists(Path);
 		public ObservableCollection<string> LogRows { get; } = new();
 

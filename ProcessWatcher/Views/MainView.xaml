@@ -7,13 +7,27 @@
                                 xmlns:local="clr-namespace:ProcessWatcher.Views"
                                 xmlns:reactiveUi="http://reactiveui.net"
                                 xmlns:viewModels="clr-namespace:ProcessWatcher.ViewModels"
+                                xmlns:system="clr-namespace:System;assembly=mscorlib"
                                 mc:Ignorable="d"
                                 DataContext="{Binding Path=ViewModel, RelativeSource={RelativeSource Self}}"
                                 d:DesignHeight="300"
                                 d:DesignWidth="300"
                                 AllowDrop="True">
     <Grid>
-        <ListView ItemsSource="{Binding ProcessViewModels}" >
+        <Grid.Resources>
+            <CollectionViewSource
+                IsLiveGroupingRequested="True"
+                x:Key="GroupedItems" Source="{Binding ProcessViewModels}">
+                <CollectionViewSource.LiveGroupingProperties>
+                    <system:String>GroupKey</system:String>
+                </CollectionViewSource.LiveGroupingProperties>
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="GroupKey" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
+        </Grid.Resources>
+        <ListView
+            ItemsSource="{Binding Source={StaticResource GroupedItems}}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <!--I have also tried the following line, didn't work  -->
@@ -23,11 +37,32 @@
             </ListView.ItemTemplate>
             <ListView.GroupStyle>
                 <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock FontWeight="Bold" FontSize="14" Text="Ok"/>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander
+                                            BorderThickness="0"
+                                            DataContext="{Binding Items}"
+                                            IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock
+                                                        VerticalAlignment="Top"
+                                                        FontSize="22"
+                                                        FontWeight="Bold"
+                                                        Foreground="LightGray"
+                                                        Text="{Binding GroupKey}" />
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>

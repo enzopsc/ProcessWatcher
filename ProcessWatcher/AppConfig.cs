@@ -34,9 +34,11 @@ namespace ProcessWatcher
 	{
 		public const string PathKey = "Percorso";
 		public const string AutoRestartKey = "AutoRestart";
+		public const string GroupKeyKey = "GroupKey";
 		public static string ToPathKey(this int num) => $"{PathKey}{num}";
 		public static string ToPathKey(this long num) => $"{PathKey}{num}";
 		public static string ToAutoRestartKey(this int num) => $"{AutoRestartKey}{num}";
+		public static string ToGroupKeyKey(this int num) => $"{GroupKeyKey}{num}";
 		public static string ToAutoRestartKey(this long num) => $"{AutoRestartKey}{num}";
 	}
 	public class AppConfig
@@ -54,7 +56,8 @@ namespace ProcessWatcher
 				try
 				{
 					var path = GetKeyFromConfigManager(i.ToPathKey());
-					var pathAndName = Locator.Current.GetService<IProcessFactory>().BuildProcessViewModel(path, bool.Parse(GetKeyFromConfigManager(i.ToAutoRestartKey())));
+					var groupKey = GetKeyFromConfigManager(i.ToGroupKeyKey());
+					var pathAndName = Locator.Current.GetService<IProcessFactory>().BuildProcessViewModel(path, bool.Parse(GetKeyFromConfigManager(i.ToAutoRestartKey())), groupKey);
 					if(pathAndName.IsValid)
 						ProcessConfigurations.Add(pathAndName);
 				}
@@ -76,6 +79,7 @@ namespace ProcessWatcher
 				var indexOf = ProcessConfigurations.IndexOf(processConfiguration) + 1;
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfiguration.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfiguration.AutoRestart.ToString());
+				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfiguration.GroupKey);
 				return true;
 			}
 		}
@@ -89,9 +93,11 @@ namespace ProcessWatcher
 					return false;
 				processConfigurationToUpdate.Path = processConfiguration.Path;
 				processConfigurationToUpdate.AutoRestart = processConfiguration.AutoRestart;
+				processConfigurationToUpdate.GroupKey = processConfiguration.GroupKey;
 				var indexOf = ProcessConfigurations.IndexOf(processConfigurationToUpdate) + 1;
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfigurationToUpdate.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfigurationToUpdate.AutoRestart.ToString());
+				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfigurationToUpdate.GroupKey);
 				return true;
 			}
 		}
@@ -108,11 +114,13 @@ namespace ProcessWatcher
 				{
 					AddUpdateAppSettings(x1.Index.ToPathKey(), x1.Configuration.Path);
 					AddUpdateAppSettings(x1.Index.ToAutoRestartKey(), x1.Configuration.AutoRestart.ToString());
+					AddUpdateAppSettings(x1.Index.ToGroupKeyKey(), x1.Configuration.GroupKey);
 				}
 
 				var itemToRem = ProcessConfigurations.Count + 1;
 				RemoveNumericSettings(itemToRem.ToPathKey());
 				RemoveNumericSettings(itemToRem.ToAutoRestartKey());
+				RemoveNumericSettings(itemToRem.ToGroupKeyKey());
 				return true;
 			}
 		}

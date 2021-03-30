@@ -18,7 +18,7 @@ namespace ProcessWatcher.ViewModels
 	{
 		ObservableCollection<IProcessViewModel> ProcessViewModels { get; }
 		ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { get; }
-		bool AddProcess(string path);
+		bool AddProcess(string path, string groupKey);
 		bool RemoveProcess(IProcessViewModel processViewModel);
 
 
@@ -43,9 +43,9 @@ namespace ProcessWatcher.ViewModels
 		public ObservableCollection<IProcessViewModel> ProcessViewModels { get; }
 		public extern ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { [ObservableAsProperty]get; }
 
-		public bool AddProcess(string _)
+		public bool AddProcess(string _, string groupKey)
 		{
-			return Statics.AppConfig.AddNewProcess(Locator.Current.GetService<IProcessFactory>().BuildProcessViewModel(_, false, _mainThreadScheduler));
+			return Statics.AppConfig.AddNewProcess(Locator.Current.GetService<IProcessFactory>().BuildProcessViewModel(_, false, groupKey, _mainThreadScheduler));
 		}
 		public bool RemoveProcess(IProcessViewModel _) => Statics.AppConfig.RemoveProcess(_);
 
