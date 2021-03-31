@@ -31,7 +31,9 @@
             ItemsSource="{Binding Source={StaticResource GroupedItems}, IsAsync=True}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <local:ProcessView DataContext="{Binding}" ViewModel="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" />
+                    <reactiveUi:ViewModelViewHost  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ViewModel="{Binding}" />
+
+                    <!-- <local:ProcessView DataContext="{Binding}" ViewModel="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}" /> -->
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.GroupStyle>

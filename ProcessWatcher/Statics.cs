@@ -13,6 +13,7 @@ namespace ProcessWatcher
 			_isInitialized = true;
 			BECCore.AutoLog.Logging.Setup();
 			_appConfig = new AppConfig();
+			_appConfig.InitProcessViewModels();
 		}
 
 		public static event EventHandler<NotificationEventArgs> NotificationEvent;

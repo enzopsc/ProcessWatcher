@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 
 namespace TestRunningConsole
@@ -7,9 +8,9 @@ namespace TestRunningConsole
 	{
 		public static void Main(string[] args)
 		{
-			for (int i = 0; i < 5000; i++)
+			for (int i = 1; i <= 5000; i++)
 			{
-				Console.WriteLine("Test Log");
+				Console.WriteLine($"{Assembly.GetExecutingAssembly().GetName().Name} - Log {i}");
 				Thread.Sleep(1000);
 			}
 		}

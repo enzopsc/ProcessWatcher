@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,11 +44,12 @@ namespace ProcessWatcher.Views
 							if(!file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
 								continue;
 							var metroWindow = Window.GetWindow(this) as MetroWindow;
-							var groupKey = await metroWindow.ShowInputAsync("Set Group Key", "Set Group Key");
-							if (this.ViewModel.AddProcess(file, groupKey))
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedSuccess, ProcessWatcher.Language.ProcessAddedMessage.Replace("$CONTENT$", file), NotificationType.Success));
+							var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+							var groupKey = await metroWindow.ShowInputAsync(ProcessWatcher.Language.SetGroupKeyTitle, ProcessWatcher.Language.SetGroupKeyMessage.Replace("$CONTENT$", fileNameWithoutExtension));
+							if (this.ViewModel.AddProcess(file, groupKey.ToUpper()))
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedSuccess, ProcessWatcher.Language.ProcessAddedMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Success));
 							else
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedFail, ProcessWatcher.Language.ProcessAddedFailMessage.Replace("$CONTENT$", file), NotificationType.Error));
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedFail, ProcessWatcher.Language.ProcessAddedFailMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Error));
 						}
 					})
 					.DisposeWith(x);

@@ -88,6 +88,24 @@ namespace ProcessWatcher {
         }
         
         /// <summary>
+        ///   Cerca una stringa localizzata simile a Clicking YES you will delete $CONTENT$ and Stop related process.
+        /// </summary>
+        public static string ConfirmDeleteMessage {
+            get {
+                return ResourceManager.GetString("ConfirmDeleteMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Are you sure?.
+        /// </summary>
+        public static string ConfirmDeleteTitle {
+            get {
+                return ResourceManager.GetString("ConfirmDeleteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una stringa localizzata simile a Error when adding new process.
         /// </summary>
         public static string ProcessAddedFail {
@@ -102,6 +120,15 @@ namespace ProcessWatcher {
         public static string ProcessAddedFailMessage {
             get {
                 return ResourceManager.GetString("ProcessAddedFailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been added.
+        /// </summary>
+        public static string ProcessAddedLog {
+            get {
+                return ResourceManager.GetString("ProcessAddedLog", resourceCulture);
             }
         }
         
@@ -133,6 +160,42 @@ namespace ProcessWatcher {
         }
         
         /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been stopped manually.
+        /// </summary>
+        public static string ProcessManuallyStoppedLog {
+            get {
+                return ResourceManager.GetString("ProcessManuallyStoppedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been stopped and removed.
+        /// </summary>
+        public static string ProcessRemovedLog {
+            get {
+                return ResourceManager.GetString("ProcessRemovedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been restarted.
+        /// </summary>
+        public static string ProcessRestartedLog {
+            get {
+                return ResourceManager.GetString("ProcessRestartedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ is restarting.
+        /// </summary>
+        public static string ProcessRestartingLog {
+            get {
+                return ResourceManager.GetString("ProcessRestartingLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una stringa localizzata simile a Process started.
         /// </summary>
         public static string ProcessStarted {
@@ -142,11 +205,56 @@ namespace ProcessWatcher {
         }
         
         /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been started.
+        /// </summary>
+        public static string ProcessStartedLog {
+            get {
+                return ResourceManager.GetString("ProcessStartedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cerca una stringa localizzata simile a Process stopped.
         /// </summary>
         public static string ProcessStopped {
             get {
                 return ResourceManager.GetString("ProcessStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been stopped.
+        /// </summary>
+        public static string ProcessStoppedLog {
+            get {
+                return ResourceManager.GetString("ProcessStoppedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Process $CONTENT$ has been updated.
+        /// </summary>
+        public static string ProcessUpdatedLog {
+            get {
+                return ResourceManager.GetString("ProcessUpdatedLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Group Key for $CONTENT$.
+        /// </summary>
+        public static string SetGroupKeyMessage {
+            get {
+                return ResourceManager.GetString("SetGroupKeyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una stringa localizzata simile a Set Group Key.
+        /// </summary>
+        public static string SetGroupKeyTitle {
+            get {
+                return ResourceManager.GetString("SetGroupKeyTitle", resourceCulture);
             }
         }
     }

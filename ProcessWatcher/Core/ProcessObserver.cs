@@ -34,6 +34,7 @@ namespace ProcessWatcher.Core
 		{
 			if (!File.Exists(fileName))
 				throw new FileNotFoundException("File not found", fileName);
+			ProcessUtils.KillProcess(fileName);
 			_p = new Process();
 			_p.EnableRaisingEvents = true;
 			_p.StartInfo.FileName = fileName;
@@ -64,15 +65,8 @@ namespace ProcessWatcher.Core
 				.Select(e => e.EventArgs)
 				.Do(x =>
 				{
-					try
-					{
-						foreach (var observer in _observers)
-							observer.OnNext(x);
-					}
-					catch
-					{
-					}
-					_buffer.Add(x);
+					lock(_buffer)
+						_buffer.Add(x);
 				})
 				.Publish();
 		}
@@ -99,6 +93,7 @@ namespace ProcessWatcher.Core
 			try
 			{
 				_p.Kill();
+				// _observers.ForEach(e => e.OnCompleted());
 			}
 			catch
 			{
@@ -110,8 +105,11 @@ namespace ProcessWatcher.Core
 		public IDisposable Subscribe(IObserver<DataReceivedEventArgs> observer)
 		{
 			_observers.Add(observer);
-			foreach (var dataReceivedEventArgs in _buffer.Latest())
-				observer.OnNext(dataReceivedEventArgs);
+			lock (_buffer)
+			{
+				foreach (var dataReceivedEventArgs in _buffer.Latest())
+					observer.OnNext(dataReceivedEventArgs);
+			}
 			_processObservervable.Subscribe(observer);
 			return new Unsubscriber(observer, _observers);
 		}

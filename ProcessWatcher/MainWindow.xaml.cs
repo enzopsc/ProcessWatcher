@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using BECCore.AutoLog;
 using MahApps.Metro.Controls.Dialogs;
+using MoreLinq;
 using Notifications.Wpf;
 using ProcessWatcher.ViewModels;
 using ReactiveUI;
@@ -47,9 +48,7 @@ namespace ProcessWatcher
 
         private void OnClosed(object sender, EventArgs e)
         {
-            foreach (var appConfigProcessConfiguration in Statics.AppConfig.ProcessConfigurations)
-                foreach (var process in Process.GetProcessesByName(appConfigProcessConfiguration.FileName))
-                    try { process.Kill(); }catch(Exception ex) { Logging.Logger.Error("-> MainWindow -> OnClosed : ", ex); }
+            Statics.AppConfig.ProcessConfigurations.ForEach(c => Utils.ProcessUtils.KillProcess(c.Path));
         }
 
         private void GlobalOnNotificationEvent(object sender, NotificationEventArgs e)

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using BECCore.AutoLog;
 using ProcessWatcher.Core;
 using ProcessWatcher.ViewModels;
 using Splat;
@@ -51,6 +52,10 @@ namespace ProcessWatcher
 		{
 			LogsBufferSize = int.Parse(GetKeyFromConfigManager(nameof(LogsBufferSize)));
 			ProcessConfigurations = new ObservableCollection<IProcessViewModel>();
+		}
+
+		public void InitProcessViewModels()
+		{
 			for (int i = 1; i < 100; i++)
 			{
 				try
@@ -80,6 +85,7 @@ namespace ProcessWatcher
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfiguration.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfiguration.AutoRestart.ToString());
 				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfiguration.GroupKey);
+				Logging.Logger.Info("-> AppConfig -> AddNewProcess : " + $"{Language.ProcessAddedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
 				return true;
 			}
 		}
@@ -98,6 +104,7 @@ namespace ProcessWatcher
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfigurationToUpdate.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfigurationToUpdate.AutoRestart.ToString());
 				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfigurationToUpdate.GroupKey);
+				Logging.Logger.Info("-> AppConfig -> UpdateProcess : " + $"{Language.ProcessUpdatedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
 				return true;
 			}
 		}
@@ -121,6 +128,7 @@ namespace ProcessWatcher
 				RemoveNumericSettings(itemToRem.ToPathKey());
 				RemoveNumericSettings(itemToRem.ToAutoRestartKey());
 				RemoveNumericSettings(itemToRem.ToGroupKeyKey());
+				Logging.Logger.Info("-> AppConfig -> RemoveProcess : " + $"{Language.ProcessRemovedLog.Replace("$CONTENT$", processConfigurationToRem.FileName)}");
 				return true;
 			}
 		}
