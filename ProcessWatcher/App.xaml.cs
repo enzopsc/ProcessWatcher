@@ -35,13 +35,13 @@ namespace ProcessWatcher
             switch (Thread.CurrentThread.CurrentCulture.ToString())
             {
                 case "it-IT":
-                    Language.Culture = new System.Globalization.CultureInfo("it-IT");
+                    Language.Resources.Culture = new System.Globalization.CultureInfo("it-IT");
                     break;
                 case "en-US":
-                    Language.Culture = new System.Globalization.CultureInfo("en-US");
+                    Language.Resources.Culture = new System.Globalization.CultureInfo("en-US");
                     break;
                 default:
-                    Language.Culture = new System.Globalization.CultureInfo("it-IT");
+                    Language.Resources.Culture = new System.Globalization.CultureInfo("it-IT");
                     break;
             }
         }

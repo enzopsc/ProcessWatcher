@@ -1,22 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
         <RootNamespace>ProcessWatcher.Resources</RootNamespace>
+        <TargetFrameworks>net452;net46;net461;net462;net47;net472;net48</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\Language.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Language.Designer.cs</LastGenOutput>
+      <EmbeddedResource Update="Resources\Resources.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        <CustomToolNamespace>ProcessWatcher.Language</CustomToolNamespace>
       </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Resources\Language.Designer.cs">
+      <Compile Update="Resources\Resources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
-        <DependentUpon>Language.resx</DependentUpon>
+        <DependentUpon>Resources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

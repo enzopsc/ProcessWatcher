@@ -11,7 +11,6 @@ namespace TestRunningConsole
 			for (int i = 1; i <= 5000; i++)
 			{
 				Console.WriteLine($"{Assembly.GetExecutingAssembly().GetName().Name} - Log {i}");
-				Thread.Sleep(1000);
 			}
 		}
 	}

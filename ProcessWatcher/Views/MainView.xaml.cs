@@ -45,11 +45,11 @@ namespace ProcessWatcher.Views
 								continue;
 							var metroWindow = Window.GetWindow(this) as MetroWindow;
 							var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-							var groupKey = await metroWindow.ShowInputAsync(ProcessWatcher.Language.SetGroupKeyTitle, ProcessWatcher.Language.SetGroupKeyMessage.Replace("$CONTENT$", fileNameWithoutExtension));
+							var groupKey = await metroWindow.ShowInputAsync(ProcessWatcher.Language.Resources.SetGroupKeyTitle, ProcessWatcher.Language.Resources.SetGroupKeyMessage.Replace("$CONTENT$", fileNameWithoutExtension));
 							if (this.ViewModel.AddProcess(file, groupKey.ToUpper()))
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedSuccess, ProcessWatcher.Language.ProcessAddedMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Success));
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedSuccess, ProcessWatcher.Language.Resources.ProcessAddedMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Success));
 							else
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.ProcessAddedFail, ProcessWatcher.Language.ProcessAddedFailMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Error));
+								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedFail, ProcessWatcher.Language.Resources.ProcessAddedFailMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Error));
 						}
 					})
 					.DisposeWith(x);

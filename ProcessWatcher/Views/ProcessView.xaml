@@ -11,7 +11,7 @@
                                 xmlns:utils="clr-namespace:ProcessWatcher.Utils"
                                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                                xmlns:processWatcher="clr-namespace:ProcessWatcher;assembly=ProcessWatcher.Language"
+                                xmlns:properties="clr-namespace:ProcessWatcher.Language;assembly=ProcessWatcher.Language"
                                 d:DataContext="{d:DesignInstance Type=viewModels:IProcessViewModel, IsDesignTimeCreatable=True}"
                                 mc:Ignorable="d"
                                 Height="30" >
@@ -38,7 +38,7 @@
                     <Setter Property="Margin" Value="5,0,5,0"/>
                 </Style>
             </StackPanel.Resources>
-            <mah:ToggleSwitch ToolTip="{x:Static processWatcher:Language.AutoRestart}"
+            <mah:ToggleSwitch ToolTip="{x:Static properties:Resources.AutoRestart}"
                               IsOn="{Binding AutoRestart, Mode=TwoWay}"/>
             <Button Command="{Binding ConsoleCommand}">
                 <iconPacks:PackIconModern Kind="Console" Foreground="Blue"/>

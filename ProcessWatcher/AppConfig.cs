@@ -85,7 +85,7 @@ namespace ProcessWatcher
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfiguration.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfiguration.AutoRestart.ToString());
 				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfiguration.GroupKey);
-				Logging.Logger.Info("-> AppConfig -> AddNewProcess : " + $"{Language.ProcessAddedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
+				Logging.Logger.Info("-> AppConfig -> AddNewProcess : " + $"{Language.Resources.ProcessAddedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
 				return true;
 			}
 		}
@@ -104,7 +104,7 @@ namespace ProcessWatcher
 				AddUpdateAppSettings(indexOf.ToPathKey(), processConfigurationToUpdate.Path);
 				AddUpdateAppSettings(indexOf.ToAutoRestartKey(), processConfigurationToUpdate.AutoRestart.ToString());
 				AddUpdateAppSettings(indexOf.ToGroupKeyKey(), processConfigurationToUpdate.GroupKey);
-				Logging.Logger.Info("-> AppConfig -> UpdateProcess : " + $"{Language.ProcessUpdatedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
+				Logging.Logger.Info("-> AppConfig -> UpdateProcess : " + $"{Language.Resources.ProcessUpdatedLog.Replace("$CONTENT$", processConfiguration.FileName)}");
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ namespace ProcessWatcher
 				RemoveNumericSettings(itemToRem.ToPathKey());
 				RemoveNumericSettings(itemToRem.ToAutoRestartKey());
 				RemoveNumericSettings(itemToRem.ToGroupKeyKey());
-				Logging.Logger.Info("-> AppConfig -> RemoveProcess : " + $"{Language.ProcessRemovedLog.Replace("$CONTENT$", processConfigurationToRem.FileName)}");
+				Logging.Logger.Info("-> AppConfig -> RemoveProcess : " + $"{Language.Resources.ProcessRemovedLog.Replace("$CONTENT$", processConfigurationToRem.FileName)}");
 				return true;
 			}
 		}

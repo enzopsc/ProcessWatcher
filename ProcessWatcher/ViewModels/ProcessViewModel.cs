@@ -91,7 +91,7 @@ namespace ProcessWatcher.ViewModels
 			this.Status = ProcessStatus.ManuallyStopped;
 			ChangeToCanStart();
 			this._processObserver.Stop();
-			Logging.Logger.Info("-> ProcessViewModel -> Stop : " + Language.ProcessStoppedLog.Replace("$CONTENT$", this.FileName));
+			Logging.Logger.Info("-> ProcessViewModel -> Stop : " + Language.Resources.ProcessStoppedLog.Replace("$CONTENT$", this.FileName));
 			// lock (LogRows)
 				// LogRows.Add(Language.ProcessStarted);
 			await _processObserver.LastOrDefaultAsync();
@@ -113,7 +113,7 @@ namespace ProcessWatcher.ViewModels
 			var started = this._processObserver.Start();
 			if (started)
 			{
-				Logging.Logger.Info("-> ProcessViewModel -> Start : " + Language.ProcessStartedLog.Replace("$CONTENT$", this.FileName));
+				Logging.Logger.Info("-> ProcessViewModel -> Start : " + Language.Resources.ProcessStartedLog.Replace("$CONTENT$", this.FileName));
 				this.Status = ProcessStatus.Running;
 			}
 			return started;
@@ -183,11 +183,11 @@ namespace ProcessWatcher.ViewModels
 					this.ChangeToCanStart();
 					if(this.Status == ProcessStatus.ManuallyStopped)
 					{
-						Logging.Logger.Info("-> ProcessViewModel -> SetupProcessObserver : " + $"{Language.ProcessManuallyStoppedLog.Replace("$CONTENT$", this.FileName)}");
+						Logging.Logger.Info("-> ProcessViewModel -> SetupProcessObserver : " + $"{Language.Resources.ProcessManuallyStoppedLog.Replace("$CONTENT$", this.FileName)}");
 						return;
 					}
 
-					Logging.Logger.Info("-> ProcessViewModel -> SetupProcessObserver : " + $"{Language.ProcessStoppedLog.Replace("$CONTENT$", this.FileName)}");
+					Logging.Logger.Info("-> ProcessViewModel -> SetupProcessObserver : " + $"{Language.Resources.ProcessStoppedLog.Replace("$CONTENT$", this.FileName)}");
 					this.Status = ProcessStatus.Stopped;
 					if (!this.AutoRestart)
 						return;

@@ -20,7 +20,7 @@ namespace ProcessWatcher.Views
 				this.ViewModel.RequestYesNo.RegisterHandler(async _ =>
 				{
 					if (Window.GetWindow(this) is MetroWindow metroWindow)
-						_.SetOutput(await metroWindow.ShowMessageAsync(ProcessWatcher.Language.ConfirmDeleteTitle, ProcessWatcher.Language.ConfirmDeleteMessage.Replace("$CONTENT$", this.ViewModel.FileName), MessageDialogStyle.AffirmativeAndNegative) == MessageDialogResult.Affirmative);
+						_.SetOutput(await metroWindow.ShowMessageAsync(ProcessWatcher.Language.Resources.ConfirmDeleteTitle, ProcessWatcher.Language.Resources.ConfirmDeleteMessage.Replace("$CONTENT$", this.ViewModel.FileName), MessageDialogStyle.AffirmativeAndNegative) == MessageDialogResult.Affirmative);
 					else
 						_.SetOutput(true);
 				}).DisposeWith(x);
