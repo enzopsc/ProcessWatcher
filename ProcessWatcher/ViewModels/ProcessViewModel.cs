@@ -10,7 +10,6 @@ using BECCore.AutoLog;
 using ProcessWatcher.Core;
 using ProcessWatcher.Utils;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using Splat;
 
 namespace ProcessWatcher.ViewModels
@@ -49,6 +48,7 @@ namespace ProcessWatcher.ViewModels
 		ReactiveCommand<Unit, bool> DeleteCommand { get; }
 
 		Interaction<Unit, bool> RequestYesNo { get; }
+		ReactiveCommand<Unit, Unit> OpenFilePathCommand { get; }
 	}
 
 	public class ProcessViewModel : ReactiveObject, IProcessViewModel
@@ -58,13 +58,17 @@ namespace ProcessWatcher.ViewModels
 		{
 			mainThreadScheduler ??= RxApp.MainThreadScheduler;
 			Path = fullName;
-			this.WhenAnyValue(x => x.Path)
-				.Select(e => System.IO.Path.GetFileNameWithoutExtension(Path))
-				.ToPropertyEx(this, s => s.FileName);
+			fileName = this.WhenAnyValue(x => x.Path)
+				.Select(System.IO.Path.GetFileNameWithoutExtension)
+				.ToProperty(this, s => s.FileName);
 			ConsoleCommand = ReactiveCommand.Create(() =>
 			{
 				var logsViewModel = Locator.Current.GetService<ILogsViewModelFactory>().GenerateLogsViewModel(this._processObserver, mainThreadScheduler);
 				Locator.Current.GetService<IMainScreen>().Router.Navigate.Execute(logsViewModel).Subscribe();
+			});
+			OpenFilePathCommand = ReactiveCommand.Create(() =>
+			{
+				Process.Start("explorer.exe", "/select, \"" + Path + "\"");
 			});
 			RequestYesNo = new Interaction<Unit, bool>(mainThreadScheduler);
 			StartCommand = ReactiveCommand.Create(Start, this.WhenAnyValue(e => e.CanStart).ObserveOn(mainThreadScheduler), mainThreadScheduler);
@@ -152,13 +156,25 @@ namespace ProcessWatcher.ViewModels
 		private bool _canStart = true;
 		private bool _canStop;
 		public string Path { get; set; }
-		public extern string FileName { [ObservableAsProperty]get; }
+		private readonly ObservableAsPropertyHelper<string> fileName;
+		private ProcessStatus _status;
+		private bool _autoRestart;
+		public string FileName => fileName.Value;
 		public string GroupKey { get; set; }
 		public bool IsValid => File.Exists(Path);
 		// public ObservableCollection<string> LogRows { get; } = new();
 
-		[Reactive] public ProcessStatus Status { get; private set; }
-		[Reactive] public bool AutoRestart { get; set; }
+		public ProcessStatus Status
+		{
+			get => _status;
+			private set => this.RaiseAndSetIfChanged(ref _status, value);
+		}
+
+		public bool AutoRestart
+		{
+			get => _autoRestart;
+			set => this.RaiseAndSetIfChanged(ref _autoRestart, value);
+		}
 
 
 		public bool CanStart => _canStart;
@@ -168,6 +184,7 @@ namespace ProcessWatcher.ViewModels
 		public ReactiveCommand<Unit, Unit> ConsoleCommand { get; }
 		public ReactiveCommand<Unit, bool> DeleteCommand { get; }
 		public Interaction<Unit, bool> RequestYesNo { get; }
+		public ReactiveCommand<Unit, Unit> OpenFilePathCommand { get; }
 
 		private void SetupProcessObserver()
 		{

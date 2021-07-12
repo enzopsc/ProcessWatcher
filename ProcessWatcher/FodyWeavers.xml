@@ -1,3 +1,13 @@
 ﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
-  <ReactiveUI />
+  <Costura DisableCleanup="false">
+    <ExcludeAssemblies>
+      SQLitePCLRaw.*
+    </ExcludeAssemblies>
+    <Unmanaged32Assemblies>
+      sqlcipher
+    </Unmanaged32Assemblies>
+    <Unmanaged64Assemblies>
+      sqlcipher
+    </Unmanaged64Assemblies>
+  </Costura>
 </Weavers>

@@ -4,6 +4,7 @@
                                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                xmlns:cc="http://schemas.sheva.com/wpf" 
                                 xmlns:local="clr-namespace:ProcessWatcher.Views"
                                 xmlns:viewModels="clr-namespace:ProcessWatcher.ViewModels"
                                 xmlns:reactiveUi="http://reactiveui.net"
@@ -16,6 +17,11 @@
                                 mc:Ignorable="d"
                                 Height="30" >
     <Grid>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Command="{Binding OpenFilePathCommand}" DataContext="{Binding}" Header="Apri Percorso File"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Grid.Resources>
             <utils:StatusToLEDStatusConverter x:Key="StatusToLEDStatusConverter"/>
         </Grid.Resources>

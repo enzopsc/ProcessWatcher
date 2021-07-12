@@ -8,7 +8,6 @@ using DynamicData.Binding;
 using ProcessWatcher.Core;
 using ProcessWatcher.Utils;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using Splat;
 
 namespace ProcessWatcher.ViewModels
@@ -17,7 +16,7 @@ namespace ProcessWatcher.ViewModels
 	public interface IMainViewModel : IRoutableViewModel
 	{
 		ObservableCollection<IProcessViewModel> ProcessViewModels { get; }
-		ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { get; }
+		// ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { get; }
 		bool AddProcess(string path, string groupKey);
 		bool RemoveProcess(IProcessViewModel processViewModel);
 
@@ -33,15 +32,15 @@ namespace ProcessWatcher.ViewModels
 			_mainThreadScheduler = mainThreadScheduler;
 			// var processViewModelFactory = Locator.Current.GetService<IProcessFactory>();
 			ProcessViewModels = Statics.AppConfig.ProcessConfigurations;
-			ProcessViewModels
-				.ObserveCollectionChanges()
-				.ObserveOn(mainThreadScheduler)
-				.Select(e => new ObservableCollection<IGrouping<string, IProcessViewModel>>(ProcessViewModels.GroupBy(c => c.Path)))
-				.ToPropertyEx(this, s => s.GroupedProcessViewModels);
+			// ProcessViewModels
+			// 	.ObserveCollectionChanges()
+			// 	.Select(e => new ObservableCollection<IGrouping<string, IProcessViewModel>>(ProcessViewModels.GroupBy(c => c.Path)))
+			// 	.ObserveOn(mainThreadScheduler)
+			// 	.ToPropertyEx(this, s => s.GroupedProcessViewModels);
 		}
 
 		public ObservableCollection<IProcessViewModel> ProcessViewModels { get; }
-		public extern ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { [ObservableAsProperty]get; }
+		// public extern ObservableCollection<IGrouping<string, IProcessViewModel>> GroupedProcessViewModels { [ObservableAsProperty]get; }
 
 		public bool AddProcess(string _, string groupKey)
 		{
