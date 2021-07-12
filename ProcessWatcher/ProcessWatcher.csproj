@@ -357,6 +357,7 @@
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\IdleTimeDetector.cs" />
     <Compile Include="Utils\ProcessUtils.cs" />
+    <Compile Include="Utils\ScrollToCenter.cs" />
     <Compile Include="ViewModels\LogsViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />

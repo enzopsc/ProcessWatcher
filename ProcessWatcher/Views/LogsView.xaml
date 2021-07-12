@@ -17,16 +17,27 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ScrollViewer Name="Scroller" Margin="0" Background="Black">
-            <StackPanel>
+            <!-- <StackPanel> -->
+            <!-- ScrollViewer.VerticalScrollBarVisibility="Visible" -->
+            <!-- ScrollViewer.CanContentScroll="True" -->
+                <!-- <ListBox ItemsSource="{Binding ConsoleOutput, Mode=OneWay}" SelectionMode="Single" -->
+                <!--          x:Name="ListBox" -->
+                <!--          > -->
+                <!--     <ListBox.ItemTemplate> -->
+                <!--         <DataTemplate> -->
+                <!--             <TextBlock Text="{Binding}" Foreground="White"  FontFamily="Consolas"/> -->
+                <!--         </DataTemplate> -->
+                <!--     </ListBox.ItemTemplate> -->
+                <!-- </ListBox> -->
                 <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" Foreground="White" FontFamily="Consolas"/>
+                            <TextBlock Text="{Binding}" Foreground="White"  FontFamily="Consolas"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <!-- <TextBox Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="White" FontFamily="Consolas" Name="InputBlock" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" /> -->
-            </StackPanel>
+            <!-- </StackPanel> -->
         </ScrollViewer>
         <Button Grid.Row="1" HorizontalAlignment="Left" Command="{Binding GoBackCommand}">
             <iconPacks:PackIconTypicons Kind="ArrowBack" Foreground="Blue"  />
