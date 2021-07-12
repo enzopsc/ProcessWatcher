@@ -24,7 +24,11 @@ namespace ProcessWatcher.Views
 				this.Events().MouseMove.Select(e => Unit.Default)
 					.Merge(Observable.Range(0, 1)
 						.Select(_ => Unit.Default))
+#if DEBUG
+					.Throttle(TimeSpan.FromSeconds(5))
+#else
 					.Throttle(TimeSpan.FromMinutes(5))
+#endif
 					.ObserveOn(RxApp.MainThreadScheduler)
 					.Subscribe(_ => this.ViewModel!.GoBackCommand.Execute().Subscribe())
 					.DisposeWith(x);

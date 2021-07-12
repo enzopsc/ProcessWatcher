@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,27 +35,27 @@ namespace ProcessWatcher.Views
 				// src.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ProcessViewModel.GroupKey)));
 
 				this.Events().Drop
-					.Subscribe(async dragDropEvent =>
-					{
-						string[] files = (string[])dragDropEvent.Data.GetData(DataFormats.FileDrop);
-						if (files == null)
-							return;
-						foreach (var file in files)
-						{
-							if(!file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
-								continue;
-							var metroWindow = Window.GetWindow(this) as MetroWindow;
-							var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-							var groupKey = await metroWindow.ShowInputAsync(ProcessWatcher.Language.Resources.SetGroupKeyTitle, ProcessWatcher.Language.Resources.SetGroupKeyMessage.Replace("$CONTENT$", fileNameWithoutExtension));
-							if (this.ViewModel.AddProcess(file, groupKey.ToUpper()))
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedSuccess, ProcessWatcher.Language.Resources.ProcessAddedMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Success));
-							else
-								Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedFail, ProcessWatcher.Language.Resources.ProcessAddedFailMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Error));
-						}
-					})
+					.Subscribe(OnItemDragged)
 					.DisposeWith(x);
 			});
 
+		}
+
+		private async void OnItemDragged(DragEventArgs dragDropEvent)
+		{
+			string[] files = (string[])dragDropEvent.Data.GetData(DataFormats.FileDrop);
+			if (files == null) return;
+			foreach (var file in files)
+			{
+				if (!file.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase)) continue;
+				var metroWindow = Window.GetWindow(this) as MetroWindow;
+				var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+				var groupKey = await metroWindow.ShowInputAsync(ProcessWatcher.Language.Resources.SetGroupKeyTitle, ProcessWatcher.Language.Resources.SetGroupKeyMessage.Replace("$CONTENT$", fileNameWithoutExtension));
+				if (this.ViewModel!.AddProcess(file, groupKey.ToUpper()))
+					Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedSuccess, ProcessWatcher.Language.Resources.ProcessAddedMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Success));
+				else
+					Statics.Notify(this, new NotificationEventArgs(ProcessWatcher.Language.Resources.ProcessAddedFail, ProcessWatcher.Language.Resources.ProcessAddedFailMessage.Replace("$CONTENT$", fileNameWithoutExtension), NotificationType.Error));
+			}
 		}
 	}
 }
